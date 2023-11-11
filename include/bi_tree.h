@@ -1,10 +1,13 @@
 #ifndef BI_TREE
 #define BI_TREE
 
-struct bi_tree
+#include "stack_func.h"
+
+struct tree_node
 {
-    int *root;
-    
+    elem_t value;
+    struct tree_node *right;
+    struct tree_node *left;
 };
 
 #endif
