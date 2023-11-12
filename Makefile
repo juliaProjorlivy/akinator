@@ -11,14 +11,14 @@ CXX_FLAGS = -I include -I lib/Verror/include -I lib/Stack/include -D _DEBUG -ggd
  -flto-odr-type-merging -fno-omit-frame-pointer -Wlarger-than=8192 -Wstack-usage=8192 -pie -fPIE -Werror=vla 															\
  -fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr
 
-SRCS = src/bi_tree_ctor_dtor.cpp src/bi_tree.cpp src/main.cpp src/bi_tree_dump.cpp src/verror.cpp
-OBJ = $(patsubst %.cpp, build/%.o, $(subst src/, , $(SRCS)))
+SRCS = src/bi_tree_ctor_dtor.cpp src/bi_tree_func.cpp src/main.cpp src/bi_tree_dump.cpp
+OBJ = $(patsubst %.cpp, build/%.o, $(subst src/, , $(SRCS))) lib/Stack/lib/libStack.a lib/Verror/lib/libVerror.a
 EXECUTABLE = bitree
 VALGRIND = valgrind --leak-check=full --leak-resolution=med ./$(EXECUTABLE)
 
 all: $(OBJ)
 	@echo "CXX $(EXECUTABLE)"
-	@$(CXX) $(CXX_FLAGS) -lasan $(OBJ) -o $(EXECUTABLE) lib/Stack/lib/libStack.a lib/Verror/lib/libVerror.a
+	@$(CXX) $(CXX_FLAGS) -lasan $(OBJ) -o $(EXECUTABLE)
 	
 build/%.o: src/%.cpp
 	mkdir -p ./build
