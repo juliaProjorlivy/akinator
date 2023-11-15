@@ -6,42 +6,42 @@ void print_pre_node(const tree_node *node)
 {
     if(!node)
     {
-        printf("nil");
+        printf("nil ");
         return;
     }
-    printf("(");
-    printf(ELEM_PRINT_SPEC, node->value);
+    printf("( ");
+    printf("\" %s \" ", node->value);
     print_pre_node(node->left);
     print_pre_node(node->right);
-    printf(")");
+    printf(") ");
 }
 
 void print_post_node(const tree_node *node)
 {
     if(!node)
     {
-        printf("nil");
+        printf("nil ");
         return;
     }
-    printf("(");
-    print_pre_node(node->left);
-    print_pre_node(node->right);
-    printf(ELEM_PRINT_SPEC, node->value);
-    printf(")");
+    printf("( ");
+    print_post_node(node->left);
+    print_post_node(node->right);
+    printf("\" %s \" ", node->value);
+    printf(") ");
 }
 
-void print_in_node(const tree_node *node)
+void print_in_node(struct tree_node *node)
 {
     if(!node)
     {
-        printf("nil");
+        printf("nil ");
         return;
     }
-    printf("(");
-    print_pre_node(node->left);
-    printf(ELEM_PRINT_SPEC, node->value);
-    print_pre_node(node->right);
-    printf(")");
+    printf("( ");
+    print_in_node(node->left);
+    printf("\" %s \" ", node->value);
+    print_in_node(node->right);
+    printf(") ");
 }
 
 void node_dump(struct tree_node *node)
@@ -50,7 +50,7 @@ void node_dump(struct tree_node *node)
     {
         return;
     }
-    printf("\tnode_%p[shape=record, label=\"val:" ELEM_PRINT_SPEC "\\n | { <f0> left | <f1> right}\", color=\"blue\"]", node, node->value);
+    printf("\tnode_%p[shape=record, label=\"%s\\n | { <f0> left | <f1> right}\", color=\"blue\"]", node, node->value);
     if(node->left)
     {
         printf("\tnode_%p:<f0>->node_%p;\n", node, node->left);

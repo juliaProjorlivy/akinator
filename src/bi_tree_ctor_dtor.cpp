@@ -2,7 +2,7 @@
 #include "verror.h"
 #include <stdlib.h>
 
-struct tree_node *New(elem_t val)
+struct tree_node *New(const char *val)
 {
     struct tree_node *node = (struct tree_node *)calloc(sizeof(tree_node), 1);
     if(!node)
@@ -24,9 +24,14 @@ void Del(struct tree_node *node)
     {
         return;
     }
-    Del(node->left);
-    Del(node->right);
-    free(node->left);
-    free(node->right);
+    if(node->left)
+    {
+        Del(node->left);
+    }
+    if(node->right)
+    {
+        Del(node->right);
+    }
+    free(node);
 }
 

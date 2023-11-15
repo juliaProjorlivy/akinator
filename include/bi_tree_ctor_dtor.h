@@ -3,7 +3,7 @@
 
 #include "bi_tree.h"
 
-struct tree_node *New(elem_t val);
+struct tree_node *New(const char *val);
 
 void Del(struct tree_node *node);
 
