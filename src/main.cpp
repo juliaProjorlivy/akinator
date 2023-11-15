@@ -14,7 +14,7 @@ int main()
     // Del(root);
     const char *line = "( ( nil \" dad \" ( nil \" dog \" nil ) ) \" mom went \" nil )";
     struct tree_node *new_root = New("mom went");
-    new_root = *in_tree_reader(&line, &new_root);
+    new_root = in_tree_reader(&line, new_root);
     // struct tree_node *keepers = add_node(new_root, "dad");
     // add_node(keepers, "dog");
     print_in_node(new_root);
