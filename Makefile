@@ -25,8 +25,10 @@ build/%.o: src/%.cpp
 	@$(CXX) $(CXX_FLAGS) -c -o $@ $<
 
 lib/Stack/lib/libStack.a:
+	make clean -C lib/Stack/
 	make lib -C lib/Stack/
 lib/Verror/lib/libVerror.a:
+	make clean -C lib/Verror/
 	make lib -C lib/Verror/
 .PHONY: clean mem
 

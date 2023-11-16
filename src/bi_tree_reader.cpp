@@ -2,6 +2,8 @@
 #include "bi_tree_ctor_dtor.h"
 #include "verror.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 const char nil[] = "nil";
 const  int max_length = 50;
@@ -68,7 +70,7 @@ struct tree_node *in_tree_reader(const char **line) // returns the root of the t
         else if(!strcmp("\"", l_val)) // if it is not nil and not a bracket -> its some value
         {
             read_value(line, l_val);
-            node->left = New((const char *)l_val);
+            node->left = New(l_val);
         }
         
 
@@ -86,7 +88,7 @@ struct tree_node *in_tree_reader(const char **line) // returns the root of the t
                 VERROR_SSCANF(*line);
                 return NULL;
             }
-            node->value = val;
+            node->value = strncpy(node->value, val, max_length);
         }
 
         char r_val[max_length] = {};

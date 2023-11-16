@@ -5,7 +5,7 @@
 
 struct tree_node
 {
-    const char *value;
+    char *value;
     struct tree_node *right;
     struct tree_node *left;
 };
