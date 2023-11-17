@@ -130,3 +130,185 @@ struct tree_node *in_tree_reader(const char **line) // returns the root of the t
     return NULL;
 }
 
+struct tree_node *pre_tree_reader(const char **line) // returns the root of the tree
+{    
+    int word_len = 0;
+    char bracket[max_length] = {};
+
+    if(!sscanf(*line, "%s %n", bracket, &word_len))
+    {
+        VERROR_SSCANF(*line);
+        return NULL;
+    }
+    *line += word_len;
+
+    if(!strcmp(bracket, "("))
+    {
+        struct tree_node *node = New("try it");
+
+        char val[max_length] = {}; // what if node contains several words -> in dump put values in brackets
+        if(!sscanf(*line, "%s %n", val, &word_len))
+        {
+            VERROR_SSCANF(*line);
+            return NULL;
+        }
+        *line += word_len; 
+        if(!strcmp(val, "\""))
+        {
+            if(read_value(line, val))
+            {
+                VERROR_SSCANF(*line);
+                return NULL;
+            }
+            node->value = strncpy(node->value, val, max_length);
+        }
+
+        char l_val[max_length] = {};
+
+        if(!sscanf(*line, "%s %n", l_val, &word_len)) // l_val is not correct does not reads as mom
+        {
+            VERROR_SSCANF(*line);
+            return NULL;
+        }
+        *line += word_len;
+        if(!strcmp(l_val, "("))
+        {
+            *line -= word_len;
+            node->left = pre_tree_reader(line);
+        }
+        else if(!strcmp("\"", l_val)) // if it is not nil and not a bracket -> its some value
+        {
+            read_value(line, l_val);
+            node->left = New(l_val);
+        }
+
+        char r_val[max_length] = {};
+        if(!sscanf(*line, "%s %n", r_val, &word_len))
+        {
+            VERROR_SSCANF(*line);
+            return NULL;
+        }
+        *line += word_len;
+
+        if(!strcmp(r_val, "("))
+        {
+            *line -= word_len;
+            node->right = pre_tree_reader(line);
+        }
+        else if(!strcmp(r_val, "\""))
+        {
+            if(read_value(line, r_val))
+            {
+                VERROR_SSCANF(*line);
+                return NULL;
+            }
+            node->right = New(r_val);
+        }
+
+        char bracket_close[max_length] = {};
+        if(!sscanf(*line, "%s %n", bracket_close, &word_len))
+        {
+            VERROR_SSCANF(*line);
+            return NULL;
+        }
+        *line += word_len;
+        if(!strcmp(bracket_close, ")"))
+        {
+            return node;
+        }
+    }
+
+    return NULL;
+}
+
+struct tree_node *post_tree_reader(const char **line) // returns the root of the tree
+{    
+    int word_len = 0;
+    char bracket[max_length] = {};
+
+    if(!sscanf(*line, "%s %n", bracket, &word_len))
+    {
+        VERROR_SSCANF(*line);
+        return NULL;
+    }
+    *line += word_len;
+
+    if(!strcmp(bracket, "("))
+    {
+        struct tree_node *node = New("try it");
+
+        char l_val[max_length] = {};
+
+        if(!sscanf(*line, "%s %n", l_val, &word_len)) // l_val is not correct does not reads as mom
+        {
+            VERROR_SSCANF(*line);
+            return NULL;
+        }
+        *line += word_len;
+        if(!strcmp(l_val, "("))
+        {
+            *line -= word_len;
+            node->left = post_tree_reader(line);
+        }
+        else if(!strcmp("\"", l_val)) // if it is not nil and not a bracket -> its some value
+        {
+            read_value(line, l_val);
+            node->left = New(l_val);
+        } 
+
+        char r_val[max_length] = {};
+        if(!sscanf(*line, "%s %n", r_val, &word_len))
+        {
+            VERROR_SSCANF(*line);
+            return NULL;
+        }
+        *line += word_len;
+
+        if(!strcmp(r_val, "("))
+        {
+            *line -= word_len;
+            node->right = post_tree_reader(line);
+        }
+        else if(!strcmp(r_val, "\""))
+        {
+            if(read_value(line, r_val))
+            {
+                VERROR_SSCANF(*line);
+                return NULL;
+            }
+            node->right = New(r_val);
+        }
+
+        char val[max_length] = {}; // what if node contains several words -> in dump put values in brackets
+        if(!sscanf(*line, "%s %n", val, &word_len))
+        {
+            VERROR_SSCANF(*line);
+            return NULL;
+        }
+        *line += word_len; 
+        if(!strcmp(val, "\""))
+        {
+            if(read_value(line, val))
+            {
+                VERROR_SSCANF(*line);
+                return NULL;
+            }
+            node->value = strncpy(node->value, val, max_length);
+        }
+
+        char bracket_close[max_length] = {};
+        if(!sscanf(*line, "%s %n", bracket_close, &word_len))
+        {
+            VERROR_SSCANF(*line);
+            return NULL;
+        }
+        *line += word_len;
+        if(!strcmp(bracket_close, ")"))
+        {
+            return node;
+        }
+    }
+
+    return NULL;
+}
+
