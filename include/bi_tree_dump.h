@@ -13,7 +13,5 @@ void node_dump(struct tree_node *node);
 
 void tree_dump(struct tree_node *node);
 
-void print_in_file(const char *filename, const char *line);
-
 
 #endif

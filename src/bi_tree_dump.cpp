@@ -49,13 +49,6 @@ void print_in_node(struct tree_node *node, char **line)
     (*line) += word_len;
 }
 
-void print_in_file(const char *filename, const char *line)
-{
-    FILE *file = fopen(filename, "w");
-    fprintf(file, "%s", line);
-    fclose(file);
-}
-
 void node_dump(struct tree_node *node)
 {
     if(!node)

@@ -6,15 +6,15 @@
 #include <string.h>
 
 const char nil[] = "nil";
-const  int max_length = 50;
+const  int max_length = 100;
 const char space = 32;
 
-// const char *line(const char *filename)
-// {
-//     FILE *file = fopen(filename, "r");
-
-//     fread()
-// }
+void print_in_file(const char *filename, const char *line)
+{
+    FILE *file = fopen(filename, "w");
+    fprintf(file, "%s", line);
+    fclose(file);
+}
 
 int read_value(const char **line, char *val)
 {
@@ -52,7 +52,7 @@ struct tree_node *in_tree_reader(const char **line) // returns the root of the t
 
     if(!strcmp(bracket, "("))
     {
-        struct tree_node *node = New("try it");
+        struct tree_node *node = New("");
 
         char l_val[max_length] = {};
 
@@ -88,7 +88,7 @@ struct tree_node *in_tree_reader(const char **line) // returns the root of the t
                 VERROR_SSCANF(*line);
                 return NULL;
             }
-            node->value = strncpy(node->value, val, max_length);
+            node->value = strncpy(node->value, val, strlen(val));
         }
 
         char r_val[max_length] = {};
@@ -144,7 +144,7 @@ struct tree_node *pre_tree_reader(const char **line) // returns the root of the 
 
     if(!strcmp(bracket, "("))
     {
-        struct tree_node *node = New("try it");
+        struct tree_node *node = New("");
 
         char val[max_length] = {}; // what if node contains several words -> in dump put values in brackets
         if(!sscanf(*line, "%s %n", val, &word_len))
@@ -235,7 +235,7 @@ struct tree_node *post_tree_reader(const char **line) // returns the root of the
 
     if(!strcmp(bracket, "("))
     {
-        struct tree_node *node = New("try it");
+        struct tree_node *node = New("");
 
         char l_val[max_length] = {};
 
