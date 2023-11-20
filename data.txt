@@ -1,1 +1,1 @@
-( ( ( ( ( nil " selena gomez " nil ) " dark heir " ( nil " lily reinheart " nil ) ) " actress " ( nil " mom " nil ) ) " woman " ( nil " anonimus " nil ) ) " cool " ( ( nil " coul " nil ) " actor " ( ( nil " cockroach " nil ) " nasty " ( nil " dad " nil ) ) ) )
+( ( ( ( nil " lily reinheart " nil ) " actress " ( nil " mom " nil ) ) " woman " ( ( nil " devil " nil ) " hot " ( ( nil " ded " nil ) " old " ( nil " dad " nil ) ) ) ) " cool " ( nil " anonimus " nil ) ) 
