@@ -4,7 +4,7 @@
 
 const int max_length = 50;
 
-struct tree_node *New(const char *val)
+struct tree_node *Node(const char *val)
 {
     struct tree_node *node = (struct tree_node *)calloc(sizeof(tree_node), 1);
     if(!node)
@@ -12,22 +12,31 @@ struct tree_node *New(const char *val)
         VERROR_MEM;
         return NULL;
     }
+
+    node->right = NULL;
+    node->left = NULL;
     
-    char *check_val = (char *)calloc(sizeof(char), max_length);
+    if(val == NULL)
+    {
+        node->value = NULL;
+        return node;
+    }
+
+    char *check_val = strndup(val, max_length);
     if(!check_val)
     {
         VERROR_MEM;
         free(node);
         return NULL;
     }
-    node->value = strncpy(check_val, val,  max_length);
-    node->right = NULL;
-    node->left = NULL;
 
+    node->value = check_val;
     return node;
+
+    // TODO: strdup instead of cpy. Also check that it's not null. If it's null -> value = null
 }
 
-void Del(struct tree_node *node)
+void visit(struct tree_node *node, void func(void *))
 {
     if(!node)
     {
@@ -35,13 +44,62 @@ void Del(struct tree_node *node)
     }
     if(node->left)
     {
-        Del(node->left);
+        visit(node->left, func);
     }
     if(node->right)
     {
-        Del(node->right);
+        visit(node->right, func);
+    }
+    func(node->value);
+    func(node);
+}
+
+// TODO: consider
+// void visit_post(node, func) {
+//     if (left)
+//         visit(left, func)
+//     if right
+//         visit(r, f)
+//     func(node)
+// }
+
+
+
+void Del_tree(struct tree_node *node)
+{
+    if(!node)
+    {
+        return;
+    }
+    if(node->left)
+    {
+        Del_tree(node->left);
+    }
+    if(node->right)
+    {
+        Del_tree(node->right);
     }
     free(node->value);
     free(node);
 }
 
+struct tree_node *add_node(struct tree_node *node, const char *val)
+{
+    struct tree_node *new_node = Node(val);
+    if(!new_node)
+    {
+        VERROR_MEM;
+        return NULL;
+    }
+    
+    if(strcmp(val, node->value) <= 0)
+    {
+        node->left = new_node;
+    }
+    else
+    {
+        node->right = new_node;
+    }
+
+    return new_node;
+}

@@ -1,41 +1,68 @@
 #include "bi_tree_ctor_dtor.h"
 #include "bi_tree_dump.h"
-#include "bi_tree_func.h"
 #include "bi_tree_reader.h"
+#include "verror.h"
 #include "akinator.h"
 #include <stdlib.h>
 #include <sys/stat.h>
 
-const int sen_len = 200;
-const int max_len = 30;
-const int words_count = 20;
+int main(int argc, char *argv[]) // argv[1] = data.txt, argv[2] = .dot
+{   
+    if(argc < 3)
+    {
+        VERROR("too little arguments are given");
+        return 1;
+    }
 
-int main()
-{
-    const int data_size = 400;
-   
-    char *line = (char *)calloc(sizeof(char), data_size);
-    char *ptr_print = line;
-    char *ptr_del = line;
+    const char *data_filename = argv[1];
+    const char *write_filename = argv[2];
     
-    FILE *file = fopen("data.txt", "r+");
+    FILE *file = fopen(data_filename, "r+");
     struct stat buf;
-    stat("data.txt", &buf);
-    fread(line, (size_t)buf.st_size, 1, file);
-    fclose(file);
-    printf("filesize = %ld\n", buf.st_size);
-    const char *const_line = (const char *)line;
-    printf("line = %s\n", const_line);
-    struct tree_node *root = in_tree_reader(&const_line);
-    akinator(root);
-    print_in_node(root, &ptr_print);
-    print_in_file("data.txt", ptr_del);
-    freopen("tree_graph/bi_tree_graph.dot", "w", stdout);
-    tree_dump(root);
-    Del(root);
-    free(ptr_del);
-    
+    if(stat(data_filename, &buf))
+    {
+        VERROR("could not stat");
+        return 1;
+    }
+    size_t data_size = (size_t)buf.st_size + 1;
+    char *line = (char *)calloc(sizeof(char), data_size);
+    if(line == NULL)
+    {
+        VERROR_MEM;
+        return 1;
+    }
 
+    if(fread(line, (size_t)buf.st_size, 1, file) < 1)
+    {
+        VERROR_FWRITE(data_filename);
+        return 1;
+    } 
+    if(fclose(file))
+    {
+        VERROR_FCLOSE(data_filename);
+        return 1;
+    }
+    printf("line = %s\n", line);
+
+    const char *const_line = (const char *)line;
+
+    struct tree_node *root = in_tree_reader(&const_line);
+    akinator(&root);
+    const int new_data_size = 500;
+    char *new_line = (char *)calloc(sizeof(char), new_data_size);
+    if(!new_line)
+    {
+        VERROR_MEM;
+        return 1;
+    }
+    char *new_ptr = new_line;
+    print_in_node(root, &new_line);
+    printf("line = %s\n", new_ptr);
+    print_in_file(data_filename, new_ptr);
+    tree_dump(root, write_filename);
+    Del_tree(root);
+    free(line);
+    free(new_ptr);
 
     return 0;
 }

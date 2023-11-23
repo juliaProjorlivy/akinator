@@ -10,10 +10,4 @@ struct tree_node
     struct tree_node *left;
 };
 
-struct Tree
-{
-    struct tree_node *root;
-    int size;
-};
-
 #endif

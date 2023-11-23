@@ -1,14 +1,13 @@
 #include "akinator.h"
 #include "bi_tree_ctor_dtor.h"
 #include "bi_tree_reader.h"
-#include "bi_tree_func.h"
 #include "bi_tree_dump.h"
 #include "verror.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-const int max_words = 100;
+static const int max_words = 100;
 const int max_len = 100;
 const char space = 32;
 
@@ -85,28 +84,33 @@ void print_definition(const char *line, char **words, int w_count)
     printf("...\n");
 }
 
-struct tree_node *find(struct tree_node *node) // retruns the last node that contains not null left and right childrens
+struct tree_node *find(struct tree_node **node) // retruns the last node that contains not null left and right childrens
 {
-    if(!node)
+    if(!(*node))
     {
         return NULL;
     }
     
     int answer = 0;
-    printf("%s?\n", node->value);
+    printf("%s?\n", (*node)->value);
     scanf(" %d", &answer);
    
-    struct tree_node *not_found = answer ? find(node->left) : find(node->right);
+    struct tree_node *not_found = answer ? find(&((*node)->left)) : find(&((*node)->right));
+    if(answer)
+    {
+        (*node)->left = not_found;
+    }
+    else
+    {
+        (*node)->right = not_found;
+    }
 
     if(!not_found)
     {
-        printf("Is it %s?\n", node->value);
-        int concl_ans = 0;
-        scanf(" %d", &concl_ans);
-        if(concl_ans)
+        if(answer)
         {
             printf("I knew it!\n");
-            return node;
+            return *node;
         }
 
         printf("Who is it then?\n");
@@ -115,25 +119,25 @@ struct tree_node *find(struct tree_node *node) // retruns the last node that con
         printf("%s\n", new_val);
 
         printf("Should I add \"%s\" to the data?\n", new_val);
-        scanf(" %d", &concl_ans);
-        if(!concl_ans)
+        scanf(" %d", &answer);
+        if(!answer)
         {
-            return node;
+            return *node;
         }
 
-        char old_val[max_len] = {};
-        char repl_val[max_len] = {};
-        printf("What %s differs from %s?\n", new_val, node->value);// reply value could be more than just one word
-        scanf(" %[^\n]s", repl_val);
+        // TODO: do not copy strings, but move the parent to the child position
 
-        strncpy(old_val, node->value, strlen(node->value));
-        strncpy(node->value, repl_val, strlen(repl_val));
-        node->value[strlen(repl_val)] = 0;
-        node->right = New(old_val);
-        node->left = New(new_val);
+        char repl_val[max_len] = {};
+        printf("What %s differs from %s?\n", new_val, (*node)->value);// reply value could be more than just one word
+        scanf(" %[^\n]", repl_val); // TODO: check ret value, max_len ogranichit', use %n
+        struct tree_node *new_node = Node(repl_val);
+        new_node->left = Node(new_val);
+        new_node->right = (*node);
+        *node = new_node; 
+
     }
     
-    return node;
+    return *node;
    
 }
 
@@ -141,44 +145,46 @@ typedef enum
 {
     FIND = 102,
     DEFINE = 100,
-    QUIT = 113,
 } options;
 
-int akinator(struct tree_node *root)
+int akinator(struct tree_node **root)
 {
     printf("find define quit\n%2c %6c %6c\n", 'f', 'd', 'q');
     char option = 0;
     scanf(" %c", &option);
     switch ((int)option)
     {
-    case FIND:
-    {
-        find(root);
-        akinator(root);
-        break;
-    }
-    case DEFINE:
-    {
-        printf("Enter a searching word:\n");
-        int w_count = 0;
-        char obj[max_len] = {};
-        scanf(" %[^\n]s", obj);
-        char **words = define(root, obj, &w_count);
-        if(!words)
+        case FIND:
         {
-            printf("The definition wasn't found\n");
+            find(root);
+            akinator(root);
+            break;
         }
-        else
+        case DEFINE:
         {
-            print_definition(obj, words, w_count);
-            free_words(words, max_words);
+            printf("Enter a searching word:\n");
+            int w_count = 0;
+            char obj[max_len] = {};
+            scanf(" %[^\n]", obj);
+            char **words = define(*root, obj, &w_count);
+            if(!words)
+            {
+                printf("The definition wasn't found\n");
+            }
+            else
+            {
+                print_definition(obj, words, w_count);
+                free_words(words, max_words);
+            }
+            akinator(root);
+            break;
         }
-        akinator(root);
-    }
-    default:
-    {
-        return 0;
-    }
+        default:
+        {
+            // TODO: print something
+            printf("exiting...\n");
+            break;
+        }
     }
     
     return 0;
