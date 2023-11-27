@@ -10,7 +10,16 @@ static const  int max_length = 100;
 int print_in_file(const char *filename, const char *line)
 {
     FILE *file = fopen(filename, "w");
-    fprintf(file, "%s", line);
+    if(!file)
+    {
+        VERROR_FOPEN(filename);
+        return 1;
+    }
+    if(fprintf(file, "%s", line) < 0)
+    {
+        VERROR_FWRITE(filename);
+        return 1;
+    }
     if(fclose(file))
     {
         VERROR_FCLOSE(filename);
@@ -36,6 +45,7 @@ int read_value(const char **line, char *val)
         val[cur_len - 1] = ' '; // because of space character
     
     } while (**line != '\"');
+
     (*line)++;
     if(**line != ' ')
     {
@@ -75,7 +85,7 @@ struct tree_node *in_tree_reader(const char **line) // returns the root of the t
                 VERROR_SSCANF(*line);
                 return NULL;
             }
-            node->value = strndup(val, strlen(val));
+            node->value = strdup(val);
         }
         node->right = in_tree_reader(line);
         if(**line != ')')
@@ -93,26 +103,4 @@ struct tree_node *in_tree_reader(const char **line) // returns the root of the t
    
     return NULL;
 }
-
-    // TODO: skip_spaces(line) -> *line == '('
-
-        // else if(!strcmp("\"", l_val)) // if it is not nil and not a bracket -> its some value
-        // {
-        //     // line[\""] = \0;
-        //     // " lily\0"
-
-        //     // "aaa \0\0b ccc 9"
-
-        //     // strtok(line, "b9");
-        //     // ptr -> "aaa \0"
-
-        //     // strtok(NULL, "\")(")
-        //     // ptr -> "\0"
-
-        //     // strtok(NULL, "9")
-        //     // ptr -> "b ccc \0"
-
-        //     read_value(line, l_val);
-        //     node->left = New(l_val);
-        // }
-        
+    

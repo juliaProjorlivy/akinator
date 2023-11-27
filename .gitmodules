@@ -1,6 +1,3 @@
-[submodule "lib/Stack"]
-	path = lib/Stack
-	url = git@github.com:juliaProjorlivy/Stack.git
 [submodule "lib/Verror"]
 	path = lib/Verror
 	url = git@github.com:juliaProjorlivy/Verror.git

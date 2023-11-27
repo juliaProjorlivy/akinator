@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "bi_tree_dump.h"
 #include "verror.h"
 #include <stdio.h>
@@ -13,9 +14,11 @@ void print_in_node(struct tree_node *node, char **line)
     sprintf(*line, "( %n", &word_len);
     (*line) += word_len;
     print_in_node(node->left, line);
+
     sprintf(*line, "\" %s \" %n", node->value, &word_len);
     (*line) += word_len;
     print_in_node(node->right, line);
+
     sprintf(*line, ") %n", &word_len);
     (*line) += word_len;
 }
@@ -55,13 +58,19 @@ void node_dump(struct tree_node *node, FILE *file) // TODO: pass file as argumen
 
 int tree_dump(struct tree_node *node, const char *filename)
 {
-    freopen("tree_graph/bi_tree_graph.dot", "w", stdout); // TODO: remove
     FILE *file = fopen(filename, "w");
 
-    fprintf(file, "digraph tree{\n");
-    fprintf(file, "\trankdir=TB;\n");
+    if(fprintf(file, "digraph tree{\n\trankdir=TB;\n") < 0)
+    {
+        VERROR_FWRITE(filename);
+        return 1;
+    }
     node_dump(node, file);
-    fprintf(file, "}\n");
+    if(fprintf(file, "}\n") < 0)
+    {
+        VERROR_FWRITE(filename);
+        return 1;
+    }
     if(fclose(file))
     {
         VERROR_FCLOSE(filename);

@@ -2,7 +2,7 @@
 #include "verror.h"
 #include <stdlib.h>
 
-const int max_length = 50;
+const int max_length = 100;
 
 struct tree_node *Node(const char *val)
 {
@@ -35,33 +35,6 @@ struct tree_node *Node(const char *val)
 
     // TODO: strdup instead of cpy. Also check that it's not null. If it's null -> value = null
 }
-
-void visit(struct tree_node *node, void func(void *))
-{
-    if(!node)
-    {
-        return;
-    }
-    if(node->left)
-    {
-        visit(node->left, func);
-    }
-    if(node->right)
-    {
-        visit(node->right, func);
-    }
-    func(node->value);
-    func(node);
-}
-
-// TODO: consider
-// void visit_post(node, func) {
-//     if (left)
-//         visit(left, func)
-//     if right
-//         visit(r, f)
-//     func(node)
-// }
 
 
 

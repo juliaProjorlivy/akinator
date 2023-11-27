@@ -3,7 +3,9 @@
 
 char **define(struct tree_node *node, const char *line, int *w_count);
 
-struct tree_node *find(struct tree_node **node);
+int check_answer(char *answer);
+
+struct tree_node *find(struct tree_node **node, char *answer);
 
 void print_definition(const char *line, char **words, int w_count);
 

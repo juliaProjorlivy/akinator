@@ -1,6 +1,6 @@
 CXX = g++
 
-CXX_FLAGS = -I include -I lib/Verror/include -I lib/Stack/include -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Waggressive-loop-optimizations 	\
+CXX_FLAGS = -I include -I lib/Verror/include -D _DEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Waggressive-loop-optimizations 	\
  -Wc++14-compat -Wmissing-declarations -Wcast-align -Wcast-qual -Wchar-subscripts -Wconditionally-supported  	\
  -Wconversion -Wctor-dtor-privacy -Wempty-body -Wfloat-equal -Wformat-nonliteral -Wformat-security 				\
  -Wformat-signedness -Wformat=2 -Winline -Wlogical-op -Wnon-virtual-dtor -Wopenmp-simd -Woverloaded-virtual 	\
@@ -12,8 +12,8 @@ CXX_FLAGS = -I include -I lib/Verror/include -I lib/Stack/include -D _DEBUG -ggd
  -fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr
 
 SRCS = src/bi_tree_ctor_dtor.cpp src/main.cpp src/bi_tree_dump.cpp src/bi_tree_reader.cpp src/akinator.cpp
-OBJ = $(patsubst %.cpp, build/%.o, $(subst src/, , $(SRCS))) lib/Stack/lib/libStack.a lib/Verror/lib/libVerror.a
-EXECUTABLE = bitree
+OBJ = $(patsubst %.cpp, build/%.o, $(subst src/, , $(SRCS))) lib/Verror/lib/libVerror.a
+EXECUTABLE = akinator
 VALGRIND = valgrind --leak-check=full --leak-resolution=med ./$(EXECUTABLE)
 
 all: $(OBJ)
@@ -26,9 +26,6 @@ build/%.o: src/%.cpp
 	mkdir -p ./build
 	@$(CXX) $(CXX_FLAGS) -c -o $@ $<
 
-lib/Stack/lib/libStack.a:
-	make clean -C lib/Stack/
-	make lib -C lib/Stack/
 lib/Verror/lib/libVerror.a:
 	make clean -C lib/Verror/
 	make lib -C lib/Verror/

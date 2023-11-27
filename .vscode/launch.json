@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "/home/julia/tree/bitree",
-            "args": [],
+            "args": ["data.txt", "tree_graph/bi_tree_graph.dot"],
             "stopAtEntry": false,
             "cwd": "/home/julia/tree",
             "environment": [],

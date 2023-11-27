@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "akinator.h"
 #include "bi_tree_ctor_dtor.h"
 #include "bi_tree_reader.h"
@@ -51,7 +52,6 @@ char **define(struct tree_node *node, const char *line, int *w_count)
         return words;
     }
 
-
     char **words_l = define(node->left, line, w_count);
 
     char **words_r = define(node->right, line, w_count);
@@ -84,19 +84,44 @@ void print_definition(const char *line, char **words, int w_count)
     printf("...\n");
 }
 
-struct tree_node *find(struct tree_node **node) // retruns the last node that contains not null left and right childrens
+int check_answer(char *answer)
+{
+    scanf(" %c", answer);
+    if(*answer != 'y' && *answer != 'n' && *answer != '\n' && *answer != 'q')
+    {
+        printf("Wrong button. Try again!\n");
+        check_answer(answer);
+    }
+    if(*answer == 'q')
+    {
+        printf("exiting...\n");
+        return 1;
+    }
+    return 0;
+}
+
+struct tree_node *find(struct tree_node **node, char *answer)
 {
     if(!(*node))
     {
         return NULL;
     }
+
+    printf("%s? [y/n/q]\n", (*node)->value);
+    if(check_answer(answer))
+    {
+        return NULL;
+    }
+    char prime_answer = *answer;
     
-    int answer = 0;
-    printf("%s?\n", (*node)->value);
-    scanf(" %d", &answer);
    
-    struct tree_node *not_found = answer ? find(&((*node)->left)) : find(&((*node)->right));
-    if(answer)
+    struct tree_node *not_found = (prime_answer != 'n') ? find(&((*node)->left), answer) : find(&((*node)->right), answer);
+    if(*answer == 'q')
+    {
+        printf("exiting...\n");
+        return NULL;
+    }
+    if(prime_answer != 'n')
     {
         (*node)->left = not_found;
     }
@@ -107,7 +132,7 @@ struct tree_node *find(struct tree_node **node) // retruns the last node that co
 
     if(!not_found)
     {
-        if(answer)
+        if(prime_answer == 'y')
         {
             printf("I knew it!\n");
             return *node;
@@ -115,12 +140,15 @@ struct tree_node *find(struct tree_node **node) // retruns the last node that co
 
         printf("Who is it then?\n");
         char new_val[max_len] = {};
-        scanf(" %[^\n]s", new_val);
-        printf("%s\n", new_val);
+        int scanf_max_len = max_len;
+        scanf(" %[^\n]%n", new_val, &scanf_max_len);
 
-        printf("Should I add \"%s\" to the data?\n", new_val);
-        scanf(" %d", &answer);
-        if(!answer)
+        printf("Should I add \"%s\" to the data? [y/n/q]\n", new_val);
+        if(check_answer(answer))
+        {
+            return NULL;
+        }
+        if(*answer == 'n')
         {
             return *node;
         }
@@ -128,8 +156,8 @@ struct tree_node *find(struct tree_node **node) // retruns the last node that co
         // TODO: do not copy strings, but move the parent to the child position
 
         char repl_val[max_len] = {};
-        printf("What %s differs from %s?\n", new_val, (*node)->value);// reply value could be more than just one word
-        scanf(" %[^\n]", repl_val); // TODO: check ret value, max_len ogranichit', use %n
+        printf("What differs %s from %s?\n", new_val, (*node)->value);
+        scanf(" %[^\n]%n", repl_val, &scanf_max_len); // TODO: check ret value, max_len ogranichit', use %n
         struct tree_node *new_node = Node(repl_val);
         new_node->left = Node(new_val);
         new_node->right = (*node);
@@ -156,7 +184,8 @@ int akinator(struct tree_node **root)
     {
         case FIND:
         {
-            find(root);
+            char answer = 'y';
+            find(root, &answer);
             akinator(root);
             break;
         }
@@ -165,7 +194,8 @@ int akinator(struct tree_node **root)
             printf("Enter a searching word:\n");
             int w_count = 0;
             char obj[max_len] = {};
-            scanf(" %[^\n]", obj);
+            int scanf_max_len = max_len;
+            scanf(" %[^\n]%n", obj, &scanf_max_len);
             char **words = define(*root, obj, &w_count);
             if(!words)
             {
@@ -181,7 +211,6 @@ int akinator(struct tree_node **root)
         }
         default:
         {
-            // TODO: print something
             printf("exiting...\n");
             break;
         }
