@@ -3,7 +3,7 @@
 
 char **define(struct tree_node *node, const char *line, int *w_count);
 
-int check_answer(char *answer);
+int check_answer(char *answer, void (*func)(char *), char *value, char *symbols);
 
 struct tree_node *find(struct tree_node **node, char *answer);
 

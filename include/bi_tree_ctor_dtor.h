@@ -3,7 +3,7 @@
 
 #include "bi_tree.h"
 
-struct tree_node *Node(const char *val); // TODO: name should include type
+struct tree_node *Node(const char *val);
 
 void Del_tree(struct tree_node *node);
 

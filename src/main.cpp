@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) // argv[1] = data.txt, argv[2] = .dot
     struct tree_node *root = in_tree_reader(&const_line);
     akinator(&root);
 
-    const int new_data_size = 500;
+    const int new_data_size = 500; // changable size ?
     char *new_line = (char *)calloc(sizeof(char), new_data_size);
     if(!new_line)
     {

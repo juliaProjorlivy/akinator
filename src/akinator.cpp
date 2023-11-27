@@ -9,8 +9,9 @@
 #include <stdlib.h>
 
 static const int max_words = 100;
-const int max_len = 100;
-const char space = 32;
+static const int max_len = 100;
+static char symb_start[] = "fd";
+static char symb_ask[] = "yn";
 
 void free_words(char **words, int n_words)
 {
@@ -84,13 +85,18 @@ void print_definition(const char *line, char **words, int w_count)
     printf("...\n");
 }
 
-int check_answer(char *answer)
+static void print_question(char *value) {printf("%s? [y/n/q]\n", value);}
+static void print_suggestion(char *value) {printf("Should I add \"%s\" to the data? [y/n/q]\n", value);}
+static void print_start(char *value) {printf("find define quit\n%s\n", value);}
+
+int check_answer(char *answer, void (*func)(char *), char *value, char *symbols)
 {
+    func(value);
     scanf(" %c", answer);
-    if(*answer != 'y' && *answer != 'n' && *answer != '\n' && *answer != 'q')
+    if(*answer != symbols[0] && *answer != symbols[1] && *answer != 'q')
     {
         printf("Wrong button. Try again!\n");
-        check_answer(answer);
+        check_answer(answer, func, value, symbols);
     }
     if(*answer == 'q')
     {
@@ -107,8 +113,7 @@ struct tree_node *find(struct tree_node **node, char *answer)
         return NULL;
     }
 
-    printf("%s? [y/n/q]\n", (*node)->value);
-    if(check_answer(answer))
+    if(check_answer(answer, print_question, (*node)->value, symb_ask))
     {
         return NULL;
     }
@@ -143,8 +148,7 @@ struct tree_node *find(struct tree_node **node, char *answer)
         int scanf_max_len = max_len;
         scanf(" %[^\n]%n", new_val, &scanf_max_len);
 
-        printf("Should I add \"%s\" to the data? [y/n/q]\n", new_val);
-        if(check_answer(answer))
+        if(check_answer(answer, print_suggestion, new_val, symb_ask))
         {
             return NULL;
         }
@@ -153,11 +157,9 @@ struct tree_node *find(struct tree_node **node, char *answer)
             return *node;
         }
 
-        // TODO: do not copy strings, but move the parent to the child position
-
         char repl_val[max_len] = {};
         printf("What differs %s from %s?\n", new_val, (*node)->value);
-        scanf(" %[^\n]%n", repl_val, &scanf_max_len); // TODO: check ret value, max_len ogranichit', use %n
+        scanf(" %[^\n]%n", repl_val, &scanf_max_len);
         struct tree_node *new_node = Node(repl_val);
         new_node->left = Node(new_val);
         new_node->right = (*node);
@@ -177,9 +179,9 @@ typedef enum
 
 int akinator(struct tree_node **root)
 {
-    printf("find define quit\n%2c %6c %6c\n", 'f', 'd', 'q');
-    char option = 0;
-    scanf(" %c", &option);
+    char option = 'q';
+    char start_string[] = "f    d   q";
+    check_answer(&option, print_start, start_string, symb_start);
     switch ((int)option)
     {
         case FIND:
