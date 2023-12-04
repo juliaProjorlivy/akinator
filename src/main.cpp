@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include "bi_tree_ctor_dtor.h"
-#include "bi_tree_dump.h"
-#include "bi_tree_reader.h"
+#include "ctor_dtor.h"
+#include "dump.h"
+#include "reader.h"
 #include "verror.h"
 #include "akinator.h"
 #include <stdlib.h>
@@ -19,10 +19,15 @@ int main(int argc, char *argv[]) // argv[1] = data.txt, argv[2] = .dot
     const char *data_filename = argv[1];
     
     FILE *file = fopen(data_filename, "r+");
+    if(!file)
+    {
+        VERROR_FOPEN(data_filename);
+        return 1;
+    }
     struct stat buf;
     if(stat(data_filename, &buf))
     {
-        VERROR("can't not stat");
+        VERROR("cannot stat");
         return 1;
     }
     size_t data_size = (size_t)buf.st_size + 1;
@@ -57,14 +62,25 @@ int main(int argc, char *argv[]) // argv[1] = data.txt, argv[2] = .dot
         return 1;
     }
     char *new_ptr = new_line;
-    print_in_node(root, &new_line);
-    print_in_file(data_filename, new_ptr);
-
-    if(argc > 2 && !strcmp(argv[2], "-graph"))
+    if(print_in_node(root, &new_line))
     {
-        const char *write_filename = "tree_graph/bi_tree_graph.dot";
-        tree_dump(root, write_filename);
+        VERROR("troubles filling the line");
+        return 1;
     }
+    if(print_in_file(data_filename, new_ptr))
+    {
+        VERROR("troubles filling the line");
+        return 1;
+    }
+
+   
+    const char *write_filename = "tree_graph/bi_tree_graph.dot";
+    if(tree_dump(root, write_filename))
+    {
+        VERROR_FWRITE(data_filename);
+        return 1;
+    }
+
     Del_tree(root);
     free(line);
     free(new_ptr);

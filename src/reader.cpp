@@ -1,5 +1,5 @@
-#include "bi_tree_reader.h"
-#include "bi_tree_ctor_dtor.h"
+#include "reader.h"
+#include "ctor_dtor.h"
 #include "verror.h"
 #include <stdio.h>
 #include <stdlib.h>

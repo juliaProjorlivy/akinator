@@ -1,7 +1,7 @@
 #ifndef BI_TREE_CTOR_DTOR_H
 #define BI_TREE_CTOR_DTOR_H
 
-#include "bi_tree.h"
+#include "tree.h"
 
 struct tree_node *Node(const char *val);
 

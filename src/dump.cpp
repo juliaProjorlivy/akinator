@@ -1,26 +1,45 @@
 #include <stdio.h>
-#include "bi_tree_dump.h"
+#include "dump.h"
 #include "verror.h"
 #include <stdio.h>
 
 
-void print_in_node(struct tree_node *node, char **line)
+int print_in_node(struct tree_node *node, char **line)
 {
     int word_len = 0;
     if(!node)
     {
-        return;
+        return 0;
     }
-    sprintf(*line, "( %n", &word_len);
+    if(sprintf(*line, "( %n", &word_len) <= 0)
+    {
+        VERROR("troulbes filling the line");
+        return 1;
+    }
     (*line) += word_len;
-    print_in_node(node->left, line);
+    if(print_in_node(node->left, line))
+    {
+        return 1;
+    }
 
-    sprintf(*line, "\" %s \" %n", node->value, &word_len);
+    if(sprintf(*line, "\" %s \" %n", node->value, &word_len) <= 0)
+    {
+        VERROR("troubles filling the line");
+        return 1;
+    }
     (*line) += word_len;
-    print_in_node(node->right, line);
+    if(print_in_node(node->right, line))
+    {
+        return 1;
+    }
 
-    sprintf(*line, ") %n", &word_len);
+    if(sprintf(*line, ") %n", &word_len) <= 0)
+    {
+        VERROR("troubles filling the line");
+        return 1;
+    }
     (*line) += word_len;
+    return 0;
 }
 
 void node_dump(struct tree_node *node, FILE *file) // TODO: pass file as argument

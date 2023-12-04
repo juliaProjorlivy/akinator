@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include "akinator.h"
-#include "bi_tree_ctor_dtor.h"
-#include "bi_tree_reader.h"
-#include "bi_tree_dump.h"
+#include "ctor_dtor.h"
+#include "reader.h"
+#include "dump.h"
 #include "verror.h"
 #include <stdio.h>
 #include <string.h>
@@ -179,6 +179,7 @@ typedef enum
 
 int akinator(struct tree_node **root)
 {
+    system("say \"hello my dear friend! Let's play a game. Choose the option\"");
     char option = 'q';
     char start_string[] = "f    d   q";
     check_answer(&option, print_start, start_string, symb_start);
